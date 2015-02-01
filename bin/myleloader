@@ -1,0 +1,62 @@
+#!/usr/bin/env ruby
+
+require 'myleloader'
+require 'optparse'
+
+include Myleloader
+
+#
+# Argument Handling
+#
+
+opt_parser = OptionParser.new do |opt|
+  opt.banner = "Usage: myleloader [OPTIONS] [ACTION]"
+  opt.separator ""
+  opt.separator "Myleloader aims to load puppet manifests parameters into a datastore"
+  opt.separator ""
+  opt.separator "Commands"
+  opt.separator ""
+  opt.separator "  * list: List current profiles and matching parameters"
+  opt.separator "  * delete: Delete a current profile"
+  opt.separator "  * upload: Upload a new version of the profile"
+end
+
+subcommands = { 
+  'list' => OptionParser.new do |opt|
+    opt.banner = "Usage: myleloader list"
+    opt.separator ""
+    opt.separator "Lists all the profiled store in the datastore"
+    opt.separator ""
+  end,
+  'upload' => OptionParser.new do |opt|
+    opt.banner = "Usage: myleloader upload"
+    opt.separator ""
+    opt.separator "Upload a new version of the profile in the datastore"
+    opt.separator ""
+  end,
+  'delete' => OptionParser.new do |opt|
+    opt.banner = "Usage: myleloader delete"
+    opt.separator ""
+    opt.separator "Delete the profile in the datastore"
+    opt.separator ""
+  end
+}
+
+opt_parser.order!
+
+if ARGV.size > 0
+  subcommand = ARGV.shift
+  case subcommand
+  when 'list'
+    subcommands[subcommand].order!
+    Myleloader.list
+  when 'upload'
+    subcommands[subcommand].order!
+    Myleloader.upload
+  when 'delete'
+    subcommands[subcommand].order!
+    Myleloader.delete ARGV
+  end
+
+end
+
